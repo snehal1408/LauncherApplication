@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LauncherApplication">
         <activity
-            android:name=".HomeScreen"
+            android:name=".HomeActivity"
             android:label="@string/home_screen"
             android:exported="true">
             <intent-filter>

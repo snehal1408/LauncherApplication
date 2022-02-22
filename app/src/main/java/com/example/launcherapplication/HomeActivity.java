@@ -10,7 +10,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-public class HomeScreen extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
 
     BatteryReceiver mBatteryReceiver = new BatteryReceiver();
     IntentFilter mIntentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);

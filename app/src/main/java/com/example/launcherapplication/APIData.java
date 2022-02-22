@@ -1,7 +1,6 @@
 package com.example.launcherapplication;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -46,7 +45,7 @@ public class APIData extends AppCompatActivity {
         // Recyclerview is visible after getting all the data.
         recyclerView.setVisibility(View.VISIBLE);
 
-        FileContentReader fcr= new FileContentReader(getApplicationContext());
+        FetchDataFromAPI fcr= new FetchDataFromAPI(getApplicationContext());
         for (int i = 0; i < links.length; i++) {
             apiEndPoint = links[i];
             url = fcr.getContentFromUrl(links[i]);

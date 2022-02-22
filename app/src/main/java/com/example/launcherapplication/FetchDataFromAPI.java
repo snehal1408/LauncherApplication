@@ -9,12 +9,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
-public class FileContentReader {
-    private Context appContext;
+public class FetchDataFromAPI {
+    private final Context appContext;
 
-    public FileContentReader(Context context) {
+    public FetchDataFromAPI(Context context) {
         this.appContext = context;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -28,7 +28,7 @@ public class FileContentReader {
             if (uc.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
                 InputStream is = uc.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 String line;
                 while ((line = br.readLine()) != null) {
 
@@ -40,10 +40,8 @@ public class FileContentReader {
 
                 throw new IOException(uc.getResponseMessage());
             }
-        } catch (StackOverflowError | Exception s) {
+        } catch (Exception | Error s) {
             s.printStackTrace();
-        } catch (Error e) {
-            e.printStackTrace();
         }
         return content.toString();
     }

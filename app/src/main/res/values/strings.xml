@@ -3,4 +3,5 @@
     <string name="home_screen">Home Screen</string>
     <string name="installed_apps">All Application</string>
     <string name="api_data">Fetched API Data</string>
+    <string name="percentage">%s %</string>
 </resources>

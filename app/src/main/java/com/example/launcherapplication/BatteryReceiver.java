@@ -9,14 +9,17 @@ import android.os.BatteryManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+
 public class BatteryReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent batteryStatusIntent = context.getApplicationContext()
                 .registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        TextView tv_battery_status = ((HomeScreen)context).findViewById(R.id.battery_status);
-        TextView tv_battery_percentage = ((HomeScreen)context).findViewById(R.id.battery_percentage);
-        ImageView batteryImage = ((HomeScreen)context).findViewById(R.id.battery_indicator);
+        TextView tv_battery_status = ((HomeActivity)context).findViewById(R.id.battery_status);
+        TextView tv_battery_percentage = ((HomeActivity)context).findViewById(R.id.battery_percentage);
+        ImageView batteryImage = ((HomeActivity)context).findViewById(R.id.battery_indicator);
 
         String action = batteryStatusIntent.getAction();
 
@@ -54,22 +57,21 @@ public class BatteryReceiver extends BroadcastReceiver {
 
 
             // Image
-            Resources res = context.getResources();
 
             if (percentage >= 90) {
-                batteryImage.setImageDrawable(res.getDrawable(R.drawable.b100));
+                batteryImage.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.b100));
 
-            } else if (90 > percentage && percentage >= 65) {
-                batteryImage.setImageDrawable(res.getDrawable(R.drawable.b75));
+            } else if (percentage < 90 && percentage >= 65) {
+                batteryImage.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.b75));
 
-            } else if (65 > percentage && percentage >= 40) {
-                batteryImage.setImageDrawable(res.getDrawable(R.drawable.b50));
+            } else if (percentage < 65 && percentage >= 40) {
+                batteryImage.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.b50));
 
-            } else if (40 > percentage && percentage >= 15) {
-                batteryImage.setImageDrawable(res.getDrawable(R.drawable.b25));
+            } else if (percentage < 40 && percentage >= 15) {
+                batteryImage.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.b25));
 
             } else {
-                batteryImage.setImageDrawable(res.getDrawable(R.drawable.b0));
+                batteryImage.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.b0));
 
             }
 

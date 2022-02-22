@@ -27,11 +27,11 @@ import java.util.List;
 
 public class GetInstalledApps extends AppCompatActivity {
 
-    List<AppList> installedApps;
-    AppAdapter installedAppAdapter;
-    ListView applist;
-    String appName, packages;
-    Drawable icon;
+    private List<AppList> installedApps;
+    private AppAdapter installedAppAdapter;
+    private ListView applist;
+    private String appName, packages;
+    private Drawable icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,81 +43,70 @@ public class GetInstalledApps extends AppCompatActivity {
         installedApps = getInstalledApps();
         installedAppAdapter = new AppAdapter(GetInstalledApps.this, installedApps);
         applist.setAdapter(installedAppAdapter);
-        applist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
-                String[] dialog = {" Open App", " App Info"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(GetInstalledApps.this);
-                builder.setTitle("Choose Action")
-                        .setItems(dialog, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
+        applist.setOnItemClickListener((adapterView, view, appPosition, l) -> {
+            String[] dialog = {" Open App", " App Info"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(GetInstalledApps.this);
+            builder.setTitle("Choose Action")
+                    .setItems(dialog, (dialog1, selectAction) -> openInstalledApp(selectAction, appPosition));
+            builder.show();
 
-                                // The 'which' argument contains the index position of the selected item
-                                String pkg = installedApps.get(i).packages;
-                                        if (which == 0) {
-                                            if (pkg.equals("com.example.launcher") || pkg.equals("com.example.launcherapplication")) {
-                                                    Intent intent1 = new Intent(GetInstalledApps.this, APIData.class);
-                                                    startActivity(intent1);
-                                            } else {
-                                                Intent intent = getPackageManager().getLaunchIntentForPackage(installedApps.get(i).packages);
-                                                if (intent != null) {
-                                                    startActivity(intent);
-                                                } else {
-                                                    Toast.makeText(GetInstalledApps.this, installedApps.get(i).packages + " Error, Please Try Again...", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        }
-
-                                if (which == 1) {
-                                    Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                    intent.setData(Uri.parse("package:" + installedApps.get(i).packages));
-                                    Toast.makeText(GetInstalledApps.this, installedApps.get(i).packages, Toast.LENGTH_SHORT).show();
-                                    startActivity(intent);
-                                }
-
-                            }
-                        });
-                builder.show();
-
-            }
         });
 
         //Total Number of Installed-Apps(i.e. List Size)
-        String  abc = applist.getCount()+"";
-        TextView countApps = (TextView)findViewById(R.id.countApps);
-        countApps.setText("Total Installed Apps: "+abc);
-        Toast.makeText(this, abc+" Apps", Toast.LENGTH_SHORT).show();
+        String abc = applist.getCount() + "";
+        TextView countApps = findViewById(R.id.countApps);
+        countApps.setText("Total Installed Apps: " + abc);
+        Toast.makeText(this, abc + " Apps", Toast.LENGTH_SHORT).show();
 
     }
 
     public List<AppList> getInstalledApps() {
-        PackageManager pm = getPackageManager();
         List<AppList> apps = new ArrayList<AppList>();
         List<PackageInfo> packs = getPackageManager().getInstalledPackages(PackageManager.GET_META_DATA);
 
         for (int i = 0; i < packs.size(); i++) {
             PackageInfo p = packs.get(i);
-//            if (!isSystemPackage(p)) {
             appName = p.applicationInfo.loadLabel(getPackageManager()).toString();
             icon = p.applicationInfo.loadIcon(getPackageManager());
             packages = p.applicationInfo.packageName;
             apps.add(new AppList(appName, icon, packages));
-//            }
         }
         return apps;
     }
 
-    public boolean isSystemPackage(PackageInfo pkgInfo) {
-        return (pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
+    private void openInstalledApp(int selectAction, int appPosition) {
+        // The 'which' argument contains the index position of the selected item
+        String pkg = installedApps.get(appPosition).packages;
+        if (selectAction == 0) {
+            if (pkg.equals("com.example.launcher") || pkg.equals("com.example.launcherapplication")) {
+                Intent intent1 = new Intent(GetInstalledApps.this, APIData.class);
+                startActivity(intent1);
+            } else {
+                Intent intent = getPackageManager().getLaunchIntentForPackage(installedApps.get(appPosition).packages);
+                if (intent != null) {
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(GetInstalledApps.this, installedApps.get(appPosition).packages + " Error, Please Try Again...", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        if (selectAction == 1) {
+            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(Uri.parse("package:" + installedApps.get(appPosition).packages));
+            Toast.makeText(GetInstalledApps.this, installedApps.get(appPosition).packages, Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }
+
     }
 
-    public class AppAdapter extends BaseAdapter {
+    private class AppAdapter extends BaseAdapter {
 
-        public LayoutInflater layoutInflater;
-        public List<AppList> listStorage;
+        private LayoutInflater layoutInflater;
+        private List<AppList> listStorage;
 
-        public AppAdapter(Context context, List<AppList> customizedListView) {
-            layoutInflater =(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        private AppAdapter(Context context, List<AppList> customizedListView) {
+            layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             listStorage = customizedListView;
         }
 
@@ -140,17 +129,15 @@ public class GetInstalledApps extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             ViewHolder listViewHolder;
-            if(convertView == null){
+            if (convertView == null) {
                 listViewHolder = new ViewHolder();
                 convertView = layoutInflater.inflate(R.layout.installed_app_list, parent, false);
-                listViewHolder.textInListView = (TextView)convertView.findViewById(R.id.list_app_name);
-                listViewHolder.imageInListView = (ImageView)convertView.findViewById(R.id.app_icon);
-                listViewHolder.packageInListView=(TextView)convertView.findViewById(R.id.app_package);
+                listViewHolder.textInListView = convertView.findViewById(R.id.list_app_name);
+                listViewHolder.imageInListView = convertView.findViewById(R.id.app_icon);
+                listViewHolder.packageInListView =  convertView.findViewById(R.id.app_package);
                 convertView.setTag(listViewHolder);
-            }
-            else
-            {
-                listViewHolder = (ViewHolder)convertView.getTag();
+            } else {
+                listViewHolder = (ViewHolder) convertView.getTag();
             }
             listViewHolder.textInListView.setText(listStorage.get(position).getName());
             listViewHolder.imageInListView.setImageDrawable(listStorage.get(position).getIcon());
@@ -159,28 +146,32 @@ public class GetInstalledApps extends AppCompatActivity {
             return convertView;
         }
 
-        class ViewHolder{
+        class ViewHolder {
             TextView textInListView;
             ImageView imageInListView;
             TextView packageInListView;
         }
     }
 
-    public class AppList {
+    private class AppList {
         private String name;
         Drawable icon;
         private String packages;
+
         public AppList(String name, Drawable icon, String packages) {
             this.name = name;
             this.icon = icon;
             this.packages = packages;
         }
+
         public String getName() {
             return name;
         }
+
         public Drawable getIcon() {
             return icon;
         }
+
         public String getPackages() {
             return packages;
         }
@@ -188,49 +179,3 @@ public class GetInstalledApps extends AppCompatActivity {
     }
 
 }
-
-
-
-
-
-
-
-//import android.content.pm.ApplicationInfo;
-//import android.content.pm.PackageManager;
-//import android.os.Bundle;
-//import android.widget.ArrayAdapter;
-//import android.widget.ListView;
-//import android.widget.TextView;
-//
-//import androidx.appcompat.app.AppCompatActivity;
-//
-//import java.util.List;
-//
-//public class GetInstalledApps extends AppCompatActivity {
-//
-//    ListView lv_listapp;
-//    TextView tv_totalapp;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.list_packages);
-//
-//        lv_listapp = findViewById(R.id.listapp);
-//        tv_totalapp = findViewById(R.id.totalapp);
-//        List<ApplicationInfo> listAppsInfo = getPackageManager()
-//                .getInstalledApplications(PackageManager.GET_META_DATA);
-//        // create a list with size of total number of apps
-//        String[] apps = new String[listAppsInfo.size()];
-//        int i = 0;
-//        // add all the app name in string list
-//        for(ApplicationInfo applicationInfo : listAppsInfo) {
-//        apps[i] = applicationInfo.packageName;
-//        i++;
-//    }
-//    // set all the apps name in list view
-//        lv_listapp.setAdapter(new ArrayAdapter<String>
-//                (GetInstalledApps.this, android.R.layout.simple_list_item_1, apps));
-//        tv_totalapp.setText(listAppsInfo.size()+"Apps are installed");
-//    }
-//}
