@@ -17,7 +17,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class APIData extends AppCompatActivity {
+public class APIDataActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     ArrayList<RecyclerViewData> data = new ArrayList<>();
@@ -45,7 +45,7 @@ public class APIData extends AppCompatActivity {
         // Recyclerview is visible after getting all the data.
         recyclerView.setVisibility(View.VISIBLE);
 
-        FetchDataFromAPI fcr= new FetchDataFromAPI(getApplicationContext());
+        FetchDataFromAPIActivity fcr= new FetchDataFromAPIActivity(getApplicationContext());
         for (int i = 0; i < links.length; i++) {
             apiEndPoint = links[i];
             url = fcr.getContentFromUrl(links[i]);
@@ -79,7 +79,7 @@ public class APIData extends AppCompatActivity {
                 catch (JSONException e) {
                     // If an error occurs, this prints the error to the log
                     e.printStackTrace();
-                    Toast.makeText(APIData.this, "Fail to get data from " + apiEndPoint,
+                    Toast.makeText(APIDataActivity.this, "Fail to get data from " + apiEndPoint,
                             Toast.LENGTH_LONG).show();
                     }
             }

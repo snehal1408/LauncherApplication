@@ -1,9 +1,7 @@
 package com.example.launcherapplication;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -12,7 +10,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -25,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GetInstalledApps extends AppCompatActivity {
+public class GetInstalledAppsActivity extends AppCompatActivity {
 
     private List<AppList> installedApps;
     private AppAdapter installedAppAdapter;
@@ -41,11 +38,11 @@ public class GetInstalledApps extends AppCompatActivity {
         applist = findViewById(R.id.installed_app_list);
 
         installedApps = getInstalledApps();
-        installedAppAdapter = new AppAdapter(GetInstalledApps.this, installedApps);
+        installedAppAdapter = new AppAdapter(GetInstalledAppsActivity.this, installedApps);
         applist.setAdapter(installedAppAdapter);
         applist.setOnItemClickListener((adapterView, view, appPosition, l) -> {
             String[] dialog = {" Open App", " App Info"};
-            AlertDialog.Builder builder = new AlertDialog.Builder(GetInstalledApps.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(GetInstalledAppsActivity.this);
             builder.setTitle("Choose Action")
                     .setItems(dialog, (dialog1, selectAction) -> openInstalledApp(selectAction, appPosition));
             builder.show();
@@ -75,18 +72,17 @@ public class GetInstalledApps extends AppCompatActivity {
     }
 
     private void openInstalledApp(int selectAction, int appPosition) {
-        // The 'which' argument contains the index position of the selected item
         String pkg = installedApps.get(appPosition).packages;
         if (selectAction == 0) {
             if (pkg.equals("com.example.launcher") || pkg.equals("com.example.launcherapplication")) {
-                Intent intent1 = new Intent(GetInstalledApps.this, APIData.class);
+                Intent intent1 = new Intent(GetInstalledAppsActivity.this, APIDataActivity.class);
                 startActivity(intent1);
             } else {
                 Intent intent = getPackageManager().getLaunchIntentForPackage(installedApps.get(appPosition).packages);
                 if (intent != null) {
                     startActivity(intent);
                 } else {
-                    Toast.makeText(GetInstalledApps.this, installedApps.get(appPosition).packages + " Error, Please Try Again...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GetInstalledAppsActivity.this, installedApps.get(appPosition).packages + " Error, Please Try Again...", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -94,7 +90,7 @@ public class GetInstalledApps extends AppCompatActivity {
         if (selectAction == 1) {
             Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             intent.setData(Uri.parse("package:" + installedApps.get(appPosition).packages));
-            Toast.makeText(GetInstalledApps.this, installedApps.get(appPosition).packages, Toast.LENGTH_SHORT).show();
+            Toast.makeText(GetInstalledAppsActivity.this, installedApps.get(appPosition).packages, Toast.LENGTH_SHORT).show();
             startActivity(intent);
         }
 

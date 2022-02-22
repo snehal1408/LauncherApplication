@@ -11,10 +11,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-public class FetchDataFromAPI {
+public class FetchDataFromAPIActivity {
     private final Context appContext;
 
-    public FetchDataFromAPI(Context context) {
+    public FetchDataFromAPIActivity(Context context) {
         this.appContext = context;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
